@@ -165,6 +165,80 @@ client.on('interactionCreate', async interaction => {
     return;
   }
 
+  if (interaction.isButton() && interaction.customId === 'ticket_abrir') {
+    const ticketsDb = require('./ticketsdb');
+    const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits, ChannelType } = require('discord.js');
+    const { COLOR_PRINCIPAL } = require('./theme');
+
+    const config = ticketsDb.getConfig();
+    if (!config.staffRoleId) {
+      return interaction.reply({ content: '❌ El sistema de tickets todavía no está configurado. Avisale a un admin (/ticket-admin config).', ephemeral: true });
+    }
+
+    const ticketExistente = ticketsDb.getTicketDeUsuario(interaction.user.id);
+    if (ticketExistente && interaction.guild.channels.cache.has(ticketExistente)) {
+      return interaction.reply({ content: `❌ Ya tenés un ticket abierto: <#${ticketExistente}>`, ephemeral: true });
+    }
+
+    await interaction.deferReply({ ephemeral: true });
+
+    try {
+      const numero = ticketsDb.siguienteNumero();
+      const nombreCanal = `ticket-${numero}-${interaction.user.username}`.toLowerCase().slice(0, 90);
+
+      const opcionesCanal = {
+        name: nombreCanal,
+        type: ChannelType.GuildText,
+        permissionOverwrites: [
+          { id: interaction.guild.id, deny: ['ViewChannel'] },
+          { id: interaction.user.id, allow: ['ViewChannel', 'SendMessages', 'ReadMessageHistory'] },
+          { id: config.staffRoleId, allow: ['ViewChannel', 'SendMessages', 'ReadMessageHistory'] },
+          { id: interaction.client.user.id, allow: ['ViewChannel', 'SendMessages', 'ReadMessageHistory'] },
+        ],
+      };
+      if (config.categoriaId) opcionesCanal.parent = config.categoriaId;
+
+      const canal = await interaction.guild.channels.create(opcionesCanal);
+      ticketsDb.registrarTicket(interaction.user.id, canal.id);
+
+      const embed = new EmbedBuilder()
+        .setColor(COLOR_PRINCIPAL)
+        .setTitle(`🎫 Ticket #${numero}`)
+        .setDescription(`Hola <@${interaction.user.id}>, contanos en qué te podemos ayudar. El staff (<@&${config.staffRoleId}>) va a responder acá.`);
+
+      const botonCerrar = new ButtonBuilder()
+        .setCustomId('ticket_cerrar')
+        .setLabel('Cerrar Ticket')
+        .setEmoji('🔒')
+        .setStyle(ButtonStyle.Danger);
+
+      const fila = new ActionRowBuilder().addComponents(botonCerrar);
+
+      await canal.send({ content: `<@${interaction.user.id}> <@&${config.staffRoleId}>`, embeds: [embed], components: [fila] });
+      await interaction.editReply({ content: `✅ Se abrió tu ticket: <#${canal.id}>` });
+    } catch (err) {
+      console.error('Error creando ticket:', err);
+      await interaction.editReply({ content: '❌ No pude crear el ticket. Puede ser un problema de permisos del bot.' });
+    }
+    return;
+  }
+
+  if (interaction.isButton() && interaction.customId === 'ticket_cerrar') {
+    const ticketsDb = require('./ticketsdb');
+
+    await interaction.reply({ content: '🔒 Cerrando el ticket en 5 segundos...' });
+    ticketsDb.cerrarTicketPorCanal(interaction.channel.id);
+
+    setTimeout(async () => {
+      try {
+        await interaction.channel.delete();
+      } catch (err) {
+        console.error('Error borrando canal de ticket:', err);
+      }
+    }, 5000);
+    return;
+  }
+
   if (!interaction.isChatInputCommand()) return;
 
   const command = client.commands.get(interaction.commandName);
