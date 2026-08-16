@@ -56,6 +56,13 @@ function setLastWork(userId, timestamp) {
   guardarDatos(datos);
 }
 
+function setLastVipDaily(userId, timestamp) {
+  const datos = leerDatos();
+  if (!datos[userId]) datos[userId] = { userId, balance: 100, lastDaily: 0, lastWork: 0 };
+  datos[userId].lastVipDaily = timestamp;
+  guardarDatos(datos);
+}
+
 function getLeaderboard(limit = 10) {
   const datos = leerDatos();
   return Object.values(datos)
@@ -69,5 +76,6 @@ module.exports = {
   addBalance,
   setLastDaily,
   setLastWork,
+  setLastVipDaily,
   getLeaderboard,
 };
