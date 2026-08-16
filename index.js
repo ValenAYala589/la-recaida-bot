@@ -64,6 +64,21 @@ async function anunciarSubidaDeNivel(member, nuevoNivel) {
   }
 }
 
+function construirEmbedLevelUp(member, nuevoNivel) {
+  const { EmbedBuilder } = require('discord.js');
+  const { COLOR_PRINCIPAL } = require('./theme');
+
+  const embed = new EmbedBuilder()
+    .setColor(COLOR_PRINCIPAL)
+    .setThumbnail(member.displayAvatarURL())
+    .setDescription(`🆙 <@${member.id}> ha subido al **nivel ${nuevoNivel}**!`);
+
+  const imagenUrl = process.env.LEVEL_UP_IMAGE_URL;
+  if (imagenUrl) embed.setImage(imagenUrl);
+
+  return embed;
+}
+
 client.on('messageCreate', async message => {
   if (message.author.bot || !message.guild) return;
 
@@ -83,7 +98,8 @@ client.on('messageCreate', async message => {
     try {
       const member = await message.guild.members.fetch(message.author.id);
       await anunciarSubidaDeNivel(member, resultado.nuevoNivel);
-      await message.channel.send(`🎉 <@${message.author.id}> subió al **nivel ${resultado.nuevoNivel}**!`);
+      const embed = construirEmbedLevelUp(member, resultado.nuevoNivel);
+      await message.channel.send({ content: `<@${message.author.id}>`, embeds: [embed] });
     } catch (err) {
       console.error('Error procesando subida de nivel:', err);
     }
