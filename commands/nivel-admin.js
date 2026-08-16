@@ -28,7 +28,10 @@ module.exports = {
         .addIntegerOption(opt => opt.setName('nivel').setDescription('Nivel máximo').setRequired(true).setMinValue(1)))
     .addSubcommand(sub =>
       sub.setName('ver-config')
-        .setDescription('Ver la configuración actual del sistema de niveles')),
+        .setDescription('Ver la configuración actual del sistema de niveles'))
+    .addSubcommand(sub =>
+      sub.setName('probar-levelup')
+        .setDescription('Mandar un mensaje de prueba del anuncio de subida de nivel (no cambia tu nivel real)')),
 
   async execute(interaction) {
     const sub = interaction.options.getSubcommand();
@@ -80,6 +83,14 @@ module.exports = {
                 .join('\n'))
         );
       return interaction.reply({ embeds: [embed] });
+    }
+
+    if (sub === 'probar-levelup') {
+      const construirEmbedLevelUp = require('../levelup-embed');
+      const nivelDePrueba = nivelesDb.getUsuario(interaction.user.id).nivel || 1;
+      const embed = construirEmbedLevelUp(interaction.member, nivelDePrueba);
+      await interaction.reply({ content: '✅ Mensaje de prueba enviado abajo.', ephemeral: true });
+      await interaction.channel.send({ content: `<@${interaction.user.id}>`, embeds: [embed] });
     }
   },
 };
