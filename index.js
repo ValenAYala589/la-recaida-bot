@@ -38,9 +38,24 @@ client.on('guildMemberAdd', async member => {
     const { EmbedBuilder } = require('discord.js');
     const { COLOR_PRINCIPAL } = require('./theme');
 
+    const fechaIngreso = new Intl.DateTimeFormat('es-AR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }).format(new Date());
+
+    const descripcion =
+      `¡Bienvenid@!\n` +
+      `Esperamos que disfrutes tu estadía en La Recaída.\n` +
+      `Eres nuestro usuario: **${member.guild.memberCount}**\n` +
+      `Fecha de ingreso: ${fechaIngreso}`;
+
     const embed = new EmbedBuilder()
       .setColor(COLOR_PRINCIPAL)
-      .setDescription(`🌑 ¡Bienvenido/a a **La Recaída**, <@${member.id}>!`);
+      .setDescription(descripcion);
 
     if (imagenUrl) embed.setImage(imagenUrl);
 
