@@ -7,6 +7,7 @@ const ABIERTOS_PATH = path.join(__dirname, 'tickets-abiertos.json');
 const CONFIG_POR_DEFECTO = {
   staffRoleId: null,
   categoriaId: null,
+  categoriaVipId: null,
   contador: 0,
 };
 

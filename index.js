@@ -196,14 +196,16 @@ client.on('interactionCreate', async interaction => {
           { id: interaction.client.user.id, allow: ['ViewChannel', 'SendMessages', 'ReadMessageHistory'] },
         ],
       };
-      if (config.categoriaId) opcionesCanal.parent = config.categoriaId;
+      const esVip = process.env.VIP_ROLE_ID && interaction.member.roles.cache.has(process.env.VIP_ROLE_ID);
+      const categoriaElegida = (esVip && config.categoriaVipId) ? config.categoriaVipId : config.categoriaId;
+      if (categoriaElegida) opcionesCanal.parent = categoriaElegida;
 
       const canal = await interaction.guild.channels.create(opcionesCanal);
       ticketsDb.registrarTicket(interaction.user.id, canal.id);
 
       const embed = new EmbedBuilder()
         .setColor(COLOR_PRINCIPAL)
-        .setTitle(`🎫 Ticket #${numero}`)
+        .setTitle(`🎫 Ticket #${numero}${esVip ? ' 👑 VIP' : ''}`)
         .setDescription(`Hola <@${interaction.user.id}>, contanos en qué te podemos ayudar. El staff (<@&${config.staffRoleId}>) va a responder acá.`);
 
       const botonCerrar = new ButtonBuilder()
