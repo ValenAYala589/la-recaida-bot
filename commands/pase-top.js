@@ -6,8 +6,8 @@ const MEDALLAS = ['🥇', '🥈', '🥉'];
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('pase-top')
-    .setDescription('Ranking de niveles del Pase de Batalla'),
+    .setName('doomsday-top')
+    .setDescription('Ranking de niveles del Pase Doomsday'),
 
   async execute(interaction) {
     const top = paseDb.getTop(10);
@@ -30,7 +30,7 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor(COLOR_PRINCIPAL)
-      .setTitle('🎖️ Ranking del Pase de Batalla — La Recaída')
+      .setTitle('🛡️ Ranking del Pase Doomsday — La Recaída')
       .setDescription(lineas.join('\n'));
 
     await interaction.reply({ embeds: [embed] });

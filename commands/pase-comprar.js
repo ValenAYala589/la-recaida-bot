@@ -5,8 +5,8 @@ const { COLOR_ACENTO, MONEDA_NOMBRE, MONEDA_EMOJI } = require('../theme');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('pase-comprar')
-    .setDescription('Comprá el siguiente nivel del Pase de Batalla gastando Lunas'),
+    .setName('doomsday-comprar')
+    .setDescription('Comprá el siguiente nivel del Pase Doomsday gastando Lunas'),
 
   async execute(interaction) {
     const config = paseDb.getConfig();
@@ -53,7 +53,7 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor(COLOR_ACENTO)
-      .setTitle('🎖️ Pase de Batalla')
+      .setTitle('🛡️ Pase Doomsday')
       .setDescription(descripcion);
 
     await interaction.reply({ embeds: [embed] });

@@ -5,8 +5,8 @@ const { COLOR_PRINCIPAL, MONEDA_NOMBRE, MONEDA_EMOJI } = require('../theme');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('pase')
-    .setDescription('Mirá tu progreso en el Pase de Batalla de La Recaída'),
+    .setName('doomsday')
+    .setDescription('Mirá tu progreso en el Pase Doomsday de La Recaída'),
 
   async execute(interaction) {
     const config = paseDb.getConfig();
@@ -15,7 +15,7 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor(COLOR_PRINCIPAL)
-      .setTitle('🎖️ Pase de Batalla — La Recaída')
+      .setTitle('🛡️ Pase Doomsday — La Recaída')
       .setAuthor({ name: interaction.user.username, iconURL: interaction.user.displayAvatarURL() });
 
     if (nivelActual >= config.nivelMaximo) {
@@ -33,7 +33,7 @@ module.exports = {
     descripcion += `💸 Costo: **${costo}** ${MONEDA_NOMBRE}\n`;
     descripcion += `🎁 Recompensa: **${recompensa.lunas}** ${MONEDA_NOMBRE}`;
     if (recompensa.rolId) descripcion += ` + rol <@&${recompensa.rolId}>`;
-    descripcion += `\n\nUsá \`/pase-comprar\` para subir de nivel.`;
+    descripcion += `\n\nUsá \`/doomsday-comprar\` para subir de nivel.`;
 
     embed.setDescription(descripcion);
     await interaction.reply({ embeds: [embed] });

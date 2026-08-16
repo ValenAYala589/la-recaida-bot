@@ -4,8 +4,8 @@ const { COLOR_PRINCIPAL, MONEDA_NOMBRE, MONEDA_EMOJI } = require('../theme');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('pase-admin')
-    .setDescription('[Admin] Configurar el Pase de Batalla')
+    .setName('doomsday-admin')
+    .setDescription('[Admin] Configurar el Pase Doomsday')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addSubcommand(sub =>
       sub.setName('costo')
@@ -59,7 +59,7 @@ module.exports = {
       const config = paseDb.getConfig();
       const embed = new EmbedBuilder()
         .setColor(COLOR_PRINCIPAL)
-        .setTitle('⚙️ Configuración del Pase de Batalla')
+        .setTitle('🛡️ Configuración del Pase Doomsday')
         .setDescription(
           `**Nivel máximo:** ${config.nivelMaximo}\n` +
           `**Costo nivel 1:** ${config.costoBase} ${MONEDA_NOMBRE}\n` +
