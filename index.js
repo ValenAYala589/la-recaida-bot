@@ -144,6 +144,24 @@ client.on('guildMemberAdd', async member => {
 });
 
 client.on('interactionCreate', async interaction => {
+  if (interaction.isButton() && interaction.customId.startsWith('rolbtn_')) {
+    const rolId = interaction.customId.replace('rolbtn_', '');
+    try {
+      const tieneRol = interaction.member.roles.cache.has(rolId);
+      if (tieneRol) {
+        await interaction.member.roles.remove(rolId);
+        await interaction.reply({ content: `➖ Te saqué el rol <@&${rolId}>.`, ephemeral: true });
+      } else {
+        await interaction.member.roles.add(rolId);
+        await interaction.reply({ content: `➕ Te di el rol <@&${rolId}>.`, ephemeral: true });
+      }
+    } catch (err) {
+      console.error('Error asignando/quitando rol por botón:', err);
+      await interaction.reply({ content: '❌ No pude darte/sacarte ese rol. Avisale a un admin (puede ser un problema de orden de roles).', ephemeral: true });
+    }
+    return;
+  }
+
   if (!interaction.isChatInputCommand()) return;
 
   const command = client.commands.get(interaction.commandName);
