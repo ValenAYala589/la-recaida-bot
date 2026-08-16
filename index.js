@@ -48,13 +48,15 @@ client.on('guildMemberAdd', async member => {
     }).format(new Date());
 
     const descripcion =
-      `¡Bienvenid@!\n` +
-      `Esperamos que disfrutes tu estadía en La Recaída.\n` +
+      `¡Bienvenid@! <@${member.id}>\n\n` +
+      `**¡Bienvenid@!** 🎉\n` +
+      `Esperamos que disfrutes tu estadía en **La Recaída**.\n` +
       `Eres nuestro usuario: **${member.guild.memberCount}**\n` +
       `Fecha de ingreso: ${fechaIngreso}`;
 
     const embed = new EmbedBuilder()
       .setColor(COLOR_PRINCIPAL)
+      .setThumbnail(member.displayAvatarURL())
       .setDescription(descripcion);
 
     if (imagenUrl) embed.setImage(imagenUrl);
