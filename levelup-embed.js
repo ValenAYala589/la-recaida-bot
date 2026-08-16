@@ -5,10 +5,8 @@ function construirEmbedLevelUp(member, nuevoNivel) {
   const embed = new EmbedBuilder()
     .setColor(COLOR_PRINCIPAL)
     .setThumbnail(member.displayAvatarURL())
-    .setDescription(
-      `**NUEVO NIVEL**\n` +
-      `🆙 <@${member.id}> ha subido al **nivel ${nuevoNivel}**!`
-    );
+    .setTitle('NUEVO NIVEL')
+    .setDescription(`🆙 <@${member.id}> ha subido al **nivel ${nuevoNivel}**!`);
 
   const imagenUrl = process.env.LEVEL_UP_IMAGE_URL;
   if (imagenUrl) embed.setImage(imagenUrl);
