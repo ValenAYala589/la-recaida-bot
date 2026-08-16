@@ -64,20 +64,7 @@ async function anunciarSubidaDeNivel(member, nuevoNivel) {
   }
 }
 
-function construirEmbedLevelUp(member, nuevoNivel) {
-  const { EmbedBuilder } = require('discord.js');
-  const { COLOR_PRINCIPAL } = require('./theme');
-
-  const embed = new EmbedBuilder()
-    .setColor(COLOR_PRINCIPAL)
-    .setThumbnail(member.displayAvatarURL())
-    .setDescription(`🆙 <@${member.id}> ha subido al **nivel ${nuevoNivel}**!`);
-
-  const imagenUrl = process.env.LEVEL_UP_IMAGE_URL;
-  if (imagenUrl) embed.setImage(imagenUrl);
-
-  return embed;
-}
+const construirEmbedLevelUp = require('./levelup-embed');
 
 client.on('messageCreate', async message => {
   if (message.author.bot || !message.guild) return;
