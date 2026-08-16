@@ -13,7 +13,12 @@ module.exports = {
         .addRoleOption(opt => opt.setName('staff-rol').setDescription('Rol que puede ver y responder los tickets').setRequired(true))
         .addChannelOption(opt =>
           opt.setName('categoria')
-            .setDescription('Categoría donde se crean los canales de ticket (opcional)')
+            .setDescription('Categoría donde se crean los tickets normales (opcional)')
+            .addChannelTypes(ChannelType.GuildCategory)
+            .setRequired(false))
+        .addChannelOption(opt =>
+          opt.setName('categoria-vip')
+            .setDescription('Categoría donde se crean los tickets de miembros VIP (opcional)')
             .addChannelTypes(ChannelType.GuildCategory)
             .setRequired(false)))
     .addSubcommand(sub =>
@@ -26,12 +31,15 @@ module.exports = {
     if (sub === 'config') {
       const staffRol = interaction.options.getRole('staff-rol');
       const categoria = interaction.options.getChannel('categoria');
+      const categoriaVip = interaction.options.getChannel('categoria-vip');
       ticketsDb.setConfig({
         staffRoleId: staffRol.id,
         categoriaId: categoria ? categoria.id : null,
+        categoriaVipId: categoriaVip ? categoriaVip.id : null,
       });
       let msg = `✅ Configuración guardada: el rol <@&${staffRol.id}> va a poder ver y responder los tickets.`;
-      if (categoria) msg += ` Se van a crear dentro de la categoría **${categoria.name}**.`;
+      if (categoria) msg += ` Tickets normales en **${categoria.name}**.`;
+      if (categoriaVip) msg += ` Tickets VIP en **${categoriaVip.name}**.`;
       return interaction.reply(msg);
     }
 
@@ -42,7 +50,8 @@ module.exports = {
         .setTitle('🎫 Configuración de Tickets')
         .setDescription(
           `**Rol de staff:** ${config.staffRoleId ? `<@&${config.staffRoleId}>` : 'No configurado'}\n` +
-          `**Categoría:** ${config.categoriaId ? `<#${config.categoriaId}>` : 'Ninguna (se crean fuera de categoría)'}\n` +
+          `**Categoría normal:** ${config.categoriaId ? `<#${config.categoriaId}>` : 'Ninguna (se crean fuera de categoría)'}\n` +
+          `**Categoría VIP:** ${config.categoriaVipId ? `<#${config.categoriaVipId}>` : 'No configurada (usa la normal)'}\n` +
           `**Tickets creados hasta ahora:** ${config.contador || 0}`
         );
       return interaction.reply({ embeds: [embed] });
